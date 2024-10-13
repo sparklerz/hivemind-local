@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,6 +6,11 @@ from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 
 import hivemind
+
+# Create a parser to handle command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--host_maddrs', type=str, default="/ip4/0.0.0.0/tcp/0", help='Host multiaddress')
+args = parser.parse_args()
 
 # Create dataset and model, same as in the basic tutorial
 # For this basic tutorial, we download only the training set
@@ -21,7 +27,7 @@ opt = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 # Create DHT: a decentralized key-value storage shared between peers
 #dht = hivemind.DHT(start=True)
 dht = hivemind.DHT(
-    host_maddrs=["/ip4/0.0.0.0/tcp/31337", "/ip4/0.0.0.0/udp/31337/quic"],
+    host_maddrs=[args.host_maddrs"],
     start=True)
 
 print('\n'.join(str(addr) for addr in dht.get_visible_maddrs()))
