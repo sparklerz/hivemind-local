@@ -45,6 +45,8 @@ opt = hivemind.Optimizer(
     verbose=True              # print logs incessently
 )
 
+opt.load_state_from_peers()
+
 # Note: if you intend to use GPU, switch to it only after the decentralized optimizer is created
 with tqdm() as progressbar:
     while True:
