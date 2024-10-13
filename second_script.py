@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -5,6 +6,11 @@ from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 
 import hivemind
+
+# Create a parser to handle command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--initial_peers', type=str, default="/ip4/0.0.0.0/tcp/0/p2p/12D3KooWJFRJsgZG9TyCLXuLx9vH36bnpMxLaS9QpZ4exzsAPZBZ", help='Initial peers')
+args = parser.parse_args()
 
 # Create dataset and model, same as in the basic tutorial
 # For this basic tutorial, we download only the training set
@@ -21,10 +27,9 @@ opt = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 # Create DHT: a decentralized key-value storage shared between peers
 #dht = hivemind.DHT(initial_peers=['/ip4/127.0.0.1/tcp/COPY_FULL_ADDRESS_FROM_PEER1_OUTPUTS'], start=True)
 dht = hivemind.DHT(
-    host_maddrs=["/ip4/0.0.0.0/tcp/0", "/ip4/0.0.0.0/udp/0/quic"],
-    initial_peers=[
-        "/ip4/209.126.80.197/tcp/2898/p2p/12D3KooWJFRJsgZG9TyCLXuLx9vH36bnpMxLaS9QpZ4exzsAPZBZ",
-    ], start=True)
+    host_maddrs=["/ip4/0.0.0.0/tcp/0"],
+    initial_peers=[args.initial_peers],
+    start=True)
 print("To join the training, use initial_peers =", [str(addr) for addr in dht.get_visible_maddrs()])
 
 # Set up a decentralized optimizer that will average with peers in background
