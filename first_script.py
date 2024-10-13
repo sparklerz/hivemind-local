@@ -27,7 +27,7 @@ opt = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 # Create DHT: a decentralized key-value storage shared between peers
 #dht = hivemind.DHT(start=True)
 dht = hivemind.DHT(
-    host_maddrs=[args.host_maddrs"],
+    host_maddrs=[args.host_maddrs],
     start=True)
 
 print('\n'.join(str(addr) for addr in dht.get_visible_maddrs()))
