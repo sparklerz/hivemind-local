@@ -23,8 +23,7 @@ opt = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 dht = hivemind.DHT(
     host_maddrs=["/ip4/0.0.0.0/tcp/0", "/ip4/0.0.0.0/udp/0/quic"],
     initial_peers=[
-        "/ip4/185.185.123.124/tcp/40615/p2p/QmaVTB2LwayToK2rzMkaCbkCaH7nF2rTHIS0IS0AN0EXAMPLE",
-        "/ip4/185.185.123.124/udp/40346/quic/p2p/QmaVTB2LwayToK2rzMkaCbkCaH7nF2rTHIS0IS0AN0EXAMPLE",
+        "/ip4/209.126.80.197/tcp/2898/p2p/12D3KooWJFRJsgZG9TyCLXuLx9vH36bnpMxLaS9QpZ4exzsAPZBZ",
     ], start=True)
 print("To join the training, use initial_peers =", [str(addr) for addr in dht.get_visible_maddrs()])
 
