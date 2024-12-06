@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import datasets, transforms
 from tqdm.auto import tqdm
+import time
 
 import hivemind
 import logging
@@ -44,13 +45,13 @@ print("To join the training, use initial_peers =", [str(addr) for addr in dht.ge
 
 # Track samples processed
 samples_processed = 0
-target_batch_size = 10000
+target_batch_size = 15
 
 # Set up a decentralized optimizer that will average with peers in background
 opt = hivemind.Optimizer(
     dht=dht,                  # use a DHT that is connected with other peers
     run_id='my_cifar_run',    # unique identifier of this collaborative run
-    batch_size_per_step=32,   # each call to opt.step adds this many samples towards the next epoch
+    batch_size_per_step=3,   # each call to opt.step adds this many samples towards the next epoch
     target_batch_size=target_batch_size,  # after peers collectively process this many samples, average weights and begin the next epoch 
     optimizer=opt,            # wrap the SGD optimizer defined above
     use_local_updates=True,   # perform optimizer steps with local gradients, average parameters in background
@@ -78,3 +79,4 @@ with tqdm() as progressbar:
             progressbar.desc = f"loss = {loss.item():.3f}"
             progressbar.update()
             print()
+            time.sleep(5)
