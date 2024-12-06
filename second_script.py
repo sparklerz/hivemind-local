@@ -77,3 +77,4 @@ with tqdm() as progressbar:
             
             progressbar.desc = f"loss = {loss.item():.3f}"
             progressbar.update()
+            print()
