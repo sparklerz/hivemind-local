@@ -43,13 +43,13 @@ print("To join the training, use initial_peers =", [str(addr) for addr in dht.ge
 
 # Track samples processed
 samples_processed = 0
-target_batch_size = 15
+target_batch_size = 10
 
 # Set up a decentralized optimizer that will average with peers in background
 opt = hivemind.Optimizer(
     dht=dht,                  # use a DHT that is connected with other peers
     run_id='my_cifar_run',    # unique identifier of this collaborative run
-    batch_size_per_step=3,   # each call to opt.step adds this many samples towards the next epoch
+    batch_size_per_step=2,   # each call to opt.step adds this many samples towards the next epoch
     target_batch_size=target_batch_size,  # after peers collectively process this many samples, average weights and begin the next epoch 
     optimizer=opt,            # wrap the SGD optimizer defined above
     use_local_updates=True,   # perform optimizer steps with local gradients, average parameters in background
@@ -63,7 +63,7 @@ opt.load_state_from_peers()
 # Note: if you intend to use GPU, switch to it only after the decentralized optimizer is created
 with tqdm() as progressbar:
     while True:
-        for x_batch, y_batch in torch.utils.data.DataLoader(trainset, shuffle=True, batch_size=3):
+        for x_batch, y_batch in torch.utils.data.DataLoader(trainset, shuffle=True, batch_size=2):
             opt.zero_grad()
             loss = F.cross_entropy(model(x_batch), y_batch)
             loss.backward()
@@ -79,4 +79,4 @@ with tqdm() as progressbar:
             progressbar.desc = f"loss = {loss.item():.3f}"
             progressbar.update()
             print()
-            time.sleep(5)
+            time.sleep(10)
