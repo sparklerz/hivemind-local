@@ -79,4 +79,4 @@ with tqdm() as progressbar:
             progressbar.desc = f"loss = {loss.item():.3f}"
             progressbar.update()
             print()
-            time.sleep(10)
+            time.sleep(15)
