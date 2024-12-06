@@ -6,6 +6,14 @@ from torchvision import datasets, transforms
 from tqdm.auto import tqdm
 
 import hivemind
+import logging
+
+# Set up logging
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
+)
+logger = logging.getLogger("Peer2")
 
 # Create a parser to handle command-line arguments
 parser = argparse.ArgumentParser()
@@ -32,12 +40,16 @@ dht = hivemind.DHT(
     start=True)
 print("To join the training, use initial_peers =", [str(addr) for addr in dht.get_visible_maddrs()])
 
+# Track samples processed
+samples_processed = 0
+target_batch_size = 10000
+
 # Set up a decentralized optimizer that will average with peers in background
 opt = hivemind.Optimizer(
     dht=dht,                  # use a DHT that is connected with other peers
     run_id='my_cifar_run',    # unique identifier of this collaborative run
     batch_size_per_step=32,   # each call to opt.step adds this many samples towards the next epoch
-    target_batch_size=10000,  # after peers collectively process this many samples, average weights and begin the next epoch 
+    target_batch_size=target_batch_size,  # after peers collectively process this many samples, average weights and begin the next epoch 
     optimizer=opt,            # wrap the SGD optimizer defined above
     use_local_updates=True,   # perform optimizer steps with local gradients, average parameters in background
     matchmaking_time=3.0,     # when averaging parameters, gather peers in background for up to this many seconds
@@ -56,5 +68,12 @@ with tqdm() as progressbar:
             loss.backward()
             opt.step()
 
+            samples_processed += len(x_batch)
+            logger.info(f"Peer2 processed {samples_processed} samples towards target {target_batch_size}")
+            
+            if samples_processed >= target_batch_size:
+                logger.info("Peer2 completed one averaging round")
+                samples_processed = 0
+            
             progressbar.desc = f"loss = {loss.item():.3f}"
             progressbar.update()
