@@ -69,10 +69,10 @@ with tqdm() as progressbar:
             opt.step()
 
             samples_processed += len(x_batch)
-            logger.info(f"Peer1 processed {samples_processed} samples towards target {target_batch_size}")
+            print(f"Peer1 processed {samples_processed} samples towards target {target_batch_size}")
             
             if samples_processed >= target_batch_size:
-                logger.info("Peer1 completed one averaging round")
+                print("Peer1 completed one averaging round")
                 samples_processed = 0
             
             progressbar.desc = f"loss = {loss.item():.3f}"
